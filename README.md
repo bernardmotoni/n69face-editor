@@ -6,8 +6,14 @@ a band that is *not* supported by Mi Create, AmazFaces, EasyFace or any other fa
 ![Random example designs on the bundled bases](docs/fluxo.png)
 
 > ⚠️ **Unofficial project, not affiliated with Xiaomi. Use at your own risk.**
-> The worst case seen so far is the band freezing on a broken face; restarting the band and switching
-> to another face fixes it. Tested with an iPhone; see [Android](#android) below.
+> In our tests the worst case was a face **failing to install** — the band never froze with our custom faces.
+> Tested with an iPhone; see [Android](#android) below.
+
+<p align="center">
+  <img src="docs/custom_face.jpg" width="300" alt="A custom face running on a Xiaomi Smart Band 9 Active">
+  <br><sub>A real custom face (green &amp; gold theme on the <code>dial15_nine</code> base) running on a Band 9 Active.
+  The character artwork is blurred because it belongs to its owner.</sub>
+</p>
 
 ---
 
@@ -39,7 +45,7 @@ You cannot write a face from scratch without compiling code, but you can **start
 | Mode | What you can do | Risk |
 |---|---|---|
 | **Normal** | Replace any image (background, digits, icons, labels…), recolor, hide elements | Low — the base's code is untouched |
-| **Beta** | Move elements, resize them, turn an element into a **sticker** (a free image of any size, using space from images the base never draws) | Medium — patches numbers (position/size) inside the base's code |
+| **Beta** | Move elements, resize them, turn an element into a **sticker** (a free image of any size, using space from images the base never draws) | Higher — patches numbers (position/size) inside the base's code; less tested |
 
 The layout (which elements exist: time, date, battery, steps…) comes from the base you pick. If you want
 date and battery, pick a base that already has them. The editor shows every base with its own artwork and
@@ -264,7 +270,7 @@ header `pixels × bpp × 2 + mode` (mode 2 = RGB565, 3 = RGB565+alpha, 4 = BGRA)
 | The band shows a mix of old and new images | The band reused cached images — install your file in place of a face you never installed |
 | The band shows the face but not the background | That base does not draw its background (the editor marks it **not drawn**) — pick another base, or use a beta sticker |
 | Colors look wrong | The band uses BGRA order; the editor already handles it — report it if you see swapped red/blue |
-| The band freezes | Restart the band and switch to another face; report the base and what you changed |
+| The face fails to install / Mi Fitness shows an error | The file was rejected — undo your last beta change (or try normal mode only) and install again; please report the base and what you changed |
 
 ## Limitations
 

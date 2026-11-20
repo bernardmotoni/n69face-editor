@@ -114,7 +114,7 @@ code{background:#0e1015;padding:1px 5px;border-radius:4px}
     <li>In Mi Fitness, install a free face you have <b>never installed</b> before.</li>
     <li>Afterwards: turn the proxy off on the phone and <b>remove the certificate</b>.</li>
   </ol>
-  <p class="warn">Unofficial modification, use at your own risk. If the band freezes, restart it and switch faces.</p>
+  <p class="warn">Unofficial modification, use at your own risk. In our tests the worst case was the face failing to install.</p>
   <button onclick="help.close()">Close</button>
 </dialog>
 
@@ -281,7 +281,7 @@ function drawPanel(){
 document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.onclick=()=>{setTab(b.dataset.tab); refresh();});
 $('#reroll').onclick=()=>{S.seed=Math.floor(Math.random()*1e6); setTab('example'); refresh();};
 $('#beta').onchange=async e=>{
-  if (e.target.checked && !(await ask('Beta mode patches numbers inside the face code (position/size) and borrows space from images the base does not use.\n\nIt may fail or freeze the band (restarting the band and switching faces fixes it). Continue?'))) { e.target.checked=false; return; }
+  if (e.target.checked && !(await ask('Beta mode patches numbers inside the face code (position/size) and borrows space from images the base does not use.\n\nIt is less tested: if something is wrong, the face may fail to install. Continue?'))) { e.target.checked=false; return; }
   syncBeta(); await act('beta',{enabled:e.target.checked}, e.target.checked?'beta mode enabled':'beta mode disabled (beta changes discarded)');};
 $('#btnExample').onclick=()=>S.base&&act('example',{seed:S.seed},'example artwork applied to your theme');
 $('#btnReset').onclick=async()=>{ if (S.base && await ask('Discard all changes for this base?')) act('reset',{},'theme restored'); };
