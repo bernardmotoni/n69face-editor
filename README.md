@@ -9,6 +9,11 @@ a band that is *not* supported by Mi Create, AmazFaces, EasyFace or any other fa
 > In our tests the worst case was a face **failing to install** — the band never froze with our custom faces.
 > Tested with an iPhone; see [Android](#android) below.
 
+> 🤖 **This project was entirely vibe coded.** The reverse engineering, the code and the docs were produced
+> in a conversation with an AI assistant (Claude), guided and tested on a real band by the author. It works
+> for us, but the code has not been reviewed line by line by an experienced developer — expect rough edges,
+> read before you trust it, and feel free to open issues or pull requests.
+
 <p align="center">
   <img src="docs/custom_face.jpg" width="300" alt="A custom face running on a Xiaomi Smart Band 9 Active">
   <br><sub>A real custom face (green &amp; gold theme on the <code>dial15_nine</code> base) running on a Band 9 Active.
