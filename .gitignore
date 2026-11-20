@@ -1,0 +1,6 @@
+# personal projects are not committed
+projects/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>N69 Face Editor — Xiaomi Smart Band 9 Active</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--bg:#14161b;--panel:#1c1f26;--line:#2c313b;--text:#e7e9ee;--muted:#9aa3b2;--accent:#f0c420;--ok:#3ecf8e;--warn:#ff9f43;--err:#ff6b6b;--beta:#b388ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{font-size:16px;margin:0;font-weight:650}
+header h1 span{color:var(--accent)}
+header .spacer{flex:1}
+button,.btn{background:#2a2f3a;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer;font:inherit}
+button:hover{border-color:#4a5263}
+button.primary{background:var(--accent);color:#1b1b1b;border-color:var(--accent);font-weight:600}
+button.danger{color:var(--err)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.beta-toggle{display:flex;align-items:center;gap:8px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;user-select:none}
+.beta-toggle.on{border-color:var(--beta);color:var(--beta)}
+.beta-toggle input{accent-color:var(--beta)}
+main{flex:1;display:grid;grid-template-columns:270px 1fr 380px;min-height:0}
+aside,section{overflow:auto;min-height:0}
+#bases{border-right:1px solid var(--line);padding:10px}
+.base{border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:10px;cursor:pointer;background:var(--panel)}
+.base.sel{border-color:var(--accent)}
+.base.bad{opacity:.55;cursor:default}
+.base .thumbs{display:flex;gap:6px}
+.base .thumbs img{width:86px;height:160px;border-radius:12px;image-rendering:pixelated;background:#000}
+.base .t{font-weight:600;margin:6px 0 2px;font-size:12.5px;word-break:break-all}
+.base .n{color:var(--muted);font-size:11.5px}
+#center{display:flex;flex-direction:column;align-items:center;padding:14px;gap:10px}
+.tabs{display:flex;gap:4px}
+.tabs button.on{background:#3a4152;border-color:#5a6377}
+#stage{position:relative;height:min(640px,calc(100vh - 250px));aspect-ratio:172/320;border-radius:13%/7%;overflow:hidden;background:#000;box-shadow:0 0 0 8px #2b2f38,0 0 0 9px #444;flex:none}
+#stage img{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+.ov{position:absolute;border:1px dashed rgba(255,255,255,.35);cursor:pointer}
+.ov:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+.ov.sel{border:2px solid var(--accent);background:rgba(240,196,32,.10)}
+.ov.hid{border-color:rgba(255,107,107,.6)}
+.ov.drag{cursor:move}
+.hint{color:var(--muted);font-size:12px;text-align:center;max-width:420px}
+#panel{border-left:1px solid var(--line);padding:12px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 8px}
+.grp{display:flex;align-items:center;gap:8px;padding:6px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+.grp:hover{background:#232733}
+.grp.sel{border-color:var(--accent);background:#262a35}
+.grp img{width:34px;height:34px;object-fit:contain;image-rendering:pixelated;background:#0b0c0f;border-radius:5px}
+.grp .nm{font-weight:600;font-size:12.5px}
+.grp .k{color:var(--muted);font-size:11.5px}
+.badge{font-size:10.5px;padding:1px 6px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-left:4px}
+.badge.off{color:var(--warn);border-color:var(--warn)}
+.badge.mod{color:var(--ok);border-color:var(--ok)}
+.badge.hid{color:var(--err);border-color:var(--err)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}
+.frames{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.frames figure{margin:0;text-align:center;font-size:10.5px;color:var(--muted);cursor:pointer}
+.frames img{display:block;max-width:56px;max-height:72px;min-width:20px;image-rendering:pixelated;background:repeating-conic-gradient(#222 0 25%,#2c2c2c 0 50%) 50%/12px 12px;border:1px solid var(--line);border-radius:4px}
+.frames figure:hover img{border-color:var(--accent)}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.row label{color:var(--muted);font-size:12px}
+input[type=number]{width:64px;background:#11131a;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+select{background:#11131a;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:4px}
+.beta-box{border:1px dashed var(--beta);border-radius:10px;padding:10px;margin-top:10px}
+.beta-box h3{margin:0 0 6px;color:var(--beta);font-size:13px}
+.note{font-size:12px;color:var(--muted)}
+.warn{color:var(--warn)}
+#log{border-top:1px solid var(--line);background:#101217;height:110px;overflow:auto;padding:8px 14px;font:12px/1.5 ui-monospace,Menlo,monospace;color:#c8cdd6}
+#log .e{color:var(--err)}#log .o{color:var(--ok)}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;max-width:640px}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+code{background:#0e1015;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<header>
+  <h1>N69 Face Editor <span>· Band 9 Active</span></h1>
+  <div class="spacer"></div>
+  <label class="beta-toggle" id="betaToggle" title="Move, resize and stickers. Patches numbers inside the face code.">
+    <input type="checkbox" id="beta"> Beta mode
+  </label>
+  <button id="btnExample" title="Fill your theme with random example artwork">🎲 Example into my theme</button>
+  <button id="btnReset" class="danger">Restore original</button>
+  <button id="btnHelp">How to install</button>
+  <button id="btnBuild" class="primary">Build .bin</button>
+</header>
+<main>
+  <aside id="bases"></aside>
+  <section id="center">
+    <div class="tabs">
+      <button data-tab="original">Original</button>
+      <button data-tab="example">Random example</button>
+      <button data-tab="project" class="on">My theme</button>
+      <button id="reroll" title="Another example">🎲</button>
+    </div>
+    <div id="stage"><img id="render" alt=""></div>
+    <div class="hint" id="hint">Pick a base on the left. Click an element on the screen to edit it.</div>
+  </section>
+  <aside id="panel"></aside>
+</main>
+<div id="log"></div>
+
+<dialog id="help">
+  <h3>How to install on the band</h3>
+  <p>The Mi Fitness app only installs faces from Xiaomi's store. A proxy on your computer delivers your file
+  instead of a store face while the phone downloads it.</p>
+  <ol>
+    <li>Create the file with <b>Build .bin</b>.</li>
+    <li>In a terminal: <code>python -m n69face install projects/&lt;base&gt;/&lt;base&gt;_custom.bin</code></li>
+    <li>On the phone (same Wi-Fi): set a manual proxy with the computer's IP and port 8080.</li>
+    <li>Open <code>http://mitm.it</code> on the phone, install the certificate and enable full trust
+      (iPhone: Settings → General → About → Certificate Trust Settings).</li>
+    <li>In Mi Fitness, install a free face you have <b>never installed</b> before.</li>
+    <li>Afterwards: turn the proxy off on the phone and <b>remove the certificate</b>.</li>
+  </ol>
+  <p class="warn">Unofficial modification, use at your own risk. If the band freezes, restart it and switch faces.</p>
+  <button onclick="help.close()">Close</button>
+</dialog>
+
+<dialog id="ask"><p id="askMsg" style="white-space:pre-line"></p>
+  <div class="row" style="justify-content:flex-end"><button id="askNo">Cancel</button><button id="askYes" class="primary">Continue</button></div></dialog>
+
+<script>
+const $ = s => document.querySelector(s);
+const ask = msg => new Promise(res => { $('#askMsg').textContent = msg; const d = $('#ask');
+  $('#askYes').onclick = () => { d.close(); res(true); }; $('#askNo').onclick = () => { d.close(); res(false); }; d.showModal(); });
+const api = async (path, body) => {
+  const r = await fetch(path, body === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const j = await r.json().catch(()=>({}));
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+};
+const log = (msg, cls='') => { const d=document.createElement('div'); d.className=cls; d.textContent=msg; $('#log').prepend(d); };
+const fileToDataURL = f => new Promise(res => { const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(f); });
+
+let S = {base:null, info:null, tab:'project', group:null, obj:null, seed:Math.floor(Math.random()*1e6)};
+
+async function loadBases(){
+  const list = await api('/api/bases');
+  const el = $('#bases'); el.innerHTML = '<h2>Bases</h2>';
+  for (const b of list){
+    const d = document.createElement('div');
+    d.className = 'base' + (b.ok ? '' : ' bad');
+    if (b.ok){
+      d.innerHTML = `<div class="thumbs"><img src="/api/render/${b.id}?src=original"><img src="/api/render/${b.id}?src=example"></div>
+        <div class="t">${b.id}</div><div class="n">${b.n_objects} elements · original | example</div>
+        ${b.notes.map(n=>`<div class="n warn">• ${n}</div>`).join('')}`;
+      d.onclick = () => selectBase(b.id);
+    } else {
+      d.innerHTML = `<div class="t">${b.id}</div><div class="n warn">${b.error}</div>`;
+    }
+    d.dataset.id = b.id; el.appendChild(d);
+  }
+  el.insertAdjacentHTML('beforeend','<p class="note">Put more bases (captured official .bin files) in the <code>bases/</code> folder and reload.</p>');
+}
+
+async function selectBase(id){
+  S.base = id; S.group = null; S.obj = null;
+  document.querySelectorAll('.base').forEach(b=>b.classList.toggle('sel', b.dataset.id===id));
+  S.info = await api('/api/base/'+id);
+  $('#beta').checked = S.info.project.beta; syncBeta();
+  refresh();
+}
+
+function syncBeta(){ $('#betaToggle').classList.toggle('on', $('#beta').checked); }
+
+function refresh(){
+  if (!S.base) return;
+  const t = Date.now();
+  const src = S.tab==='example' ? `example&seed=${S.seed}` : S.tab;
+  $('#render').src = `/api/render/${S.base}?src=${src}&scale=2&t=${t}`;
+  drawOverlays(); drawPanel();
+  $('#hint').textContent = S.tab==='project'
+    ? (S.info.project.beta ? 'Beta mode: drag elements with an editable position to move them (arrow keys work too).' : 'Click an element to replace its images, recolor or hide it.')
+    : (S.tab==='example' ? 'Random artwork, only to show this base\'s layout. Use 🎲 for another one.' : 'Original images of the base.');
+}
+
+function drawOverlays(){
+  const st = $('#stage'); st.querySelectorAll('.ov').forEach(e=>e.remove());
+  const I = S.info, pr = I.project;
+  for (const o of I.objects){
+    if (o.w===172 && o.h===320) continue;
+    const [x,y] = S.tab==='project' ? I.positions[o.id] : [o.x,o.y];
+    const [w,h] = S.tab==='project' ? I.effective[o.group] : [o.w,o.h];
+    const d = document.createElement('div');
+    d.className = 'ov' + (S.group===o.group ? ' sel':'') + (pr.hidden.includes(o.group)&&S.tab==='project' ? ' hid':'');
+    Object.assign(d.style,{left:x/1.72+'%',top:y/3.2+'%',width:w/1.72+'%',height:h/3.2+'%'});
+    d.title = `${o.group} #${o.id} (${x},${y}) ${w}x${h}${o.note? ' — '+o.note:''}`;
+    d.onclick = e => { e.stopPropagation(); S.group=o.group; S.obj=o.id; drawOverlays(); drawPanel(); };
+    if (S.tab==='project' && pr.beta && o.movable) enableDrag(d, o);
+    st.appendChild(d);
+  }
+}
+
+function enableDrag(d, o){
+  d.classList.add('drag');
+  d.onmousedown = e => {
+    e.preventDefault(); S.group=o.group; S.obj=o.id;
+    const k = $('#stage').clientWidth/172;               // screen pixels per band pixel
+    const [ox,oy] = S.info.positions[o.id], sx=e.clientX, sy=e.clientY;
+    let x=ox, y=oy;
+    const mv = ev => { x=Math.max(0,Math.round(ox+(ev.clientX-sx)/k)); y=Math.max(0,Math.round(oy+(ev.clientY-sy)/k));
+      d.style.left=x/1.72+'%'; d.style.top=y/3.2+'%'; };
+    const up = async ev => {
+      document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up);
+      if (x===ox && y===oy) { drawOverlays(); drawPanel(); return; }
+      await act('move',{obj:o.id,x,y}, `${o.group} #${o.id} → (${x},${y})`);
+    };
+    document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+  };
+}
+
+async function act(action, body, msg){
+  try { S.info = await api(`/api/project/${S.base}/${action}`, body); if (msg) log(msg,'o'); S.tab==='project' || setTab('project'); refresh(); }
+  catch(e){ log('Error: '+e.message,'e'); refresh(); }
+}
+
+function setTab(t){ S.tab=t; document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===t)); }
+
+function drawPanel(){
+  const I=S.info, pr=I.project, el=$('#panel'); const t=Date.now();
+  let h = `<h2>Base elements</h2><div class="note">${I.name} · id ${I.face_id}</div>`;
+  for (const g of I.groups){
+    const mod = g.frames.some(f=>pr.replaced.includes(f)) || pr.stickers.includes(g.name) || pr.sizes[g.name];
+    h += `<div class="grp ${S.group===g.name?'sel':''}" data-g="${g.name}">
+      <img src="/api/frame/${S.base}/${g.frames[Math.min(g.frames.length-1,1)]}?t=${t}">
+      <div><div class="nm">${g.name}${!g.drawn?'<span class="badge off">not drawn</span>':''}${pr.hidden.includes(g.name)?'<span class="badge hid">hidden</span>':''}${mod?'<span class="badge mod">changed</span>':''}</div>
+      <div class="k">${g.kind} · ${g.frames.length} img · ${I.effective[g.name].join('×')} · ${g.true_color?'true color':'up to '+g.max_colors+' colors'}</div></div></div>`;
+  }
+  if (S.group){
+    const g = I.groups.find(x=>x.name===S.group), eff=I.effective[g.name];
+    const objs = I.objects.filter(o=>o.group===g.name);
+    h += `<div class="card"><b>${g.name}</b> <span class="note">(${g.kind})</span>
+      ${!g.drawn?'<p class="warn note">This base\'s code does not draw this element: changing it has no effect on screen.</p>':''}
+      <div class="frames">${g.frames.map(f=>`<figure data-f="${f}"><img src="/api/frame/${S.base}/${f}?t=${t}"><figcaption>${f.replace(g.name+'_','')}</figcaption></figure>`).join('')}</div>
+      <div class="note">Click an image to replace it (${eff.join('×')} px; other sizes are fitted automatically).</div>
+      <div class="row"><label>Fit</label><select id="fit"><option value="pixel">pixel art (sharp)</option><option value="smooth">smooth</option></select>
+        <label class="btn">Upload several (in order)<input type="file" id="multi" accept="image/*" multiple hidden></label></div>
+      <div class="row"><label>Color</label><input type="color" id="color" value="#f0c420"><button id="recolor">Recolor</button>
+        <button id="hide">${pr.hidden.includes(g.name)?'Show':'Hide'}</button><button id="revert" class="danger">Undo</button></div>`;
+    if (pr.beta){
+      h += `<div class="beta-box"><h3>Beta</h3>
+        <div class="note">Element size (all of its images). Larger images borrow free space from images the base does not use
+        (${I.donor_bytes.length? 'largest free block: '+I.donor_bytes[0]+' bytes':'none available'}).</div>
+        <div class="row"><label>W</label><input type="number" id="w" value="${eff[0]}" min="1" max="172"><label>H</label><input type="number" id="h" value="${eff[1]}" min="1" max="320"><button id="resize">Apply size</button></div>
+        <div class="note" style="margin-top:8px">Position (you can also drag it on the screen):</div>
+        ${objs.map(o=>{const [x,y]=I.positions[o.id];return `<div class="row"><label>#${o.id}</label>
+          ${o.movable?`<label>x</label><input type="number" data-x="${o.id}" value="${x}" min="0" max="${o.max_x}"><label>y</label><input type="number" data-y="${o.id}" value="${y}" min="0" max="${o.max_y}"><button data-mv="${o.id}">Move</button>`:`<span class="note">${o.note||'fixed position'}</span>`}</div>`}).join('')}
+        <div class="note" style="margin-top:8px">Sticker: replaces the whole element with a free image (any size). Useful on elements you don't want
+        (e.g. steps) to turn them into a static drawing.</div>
+        <div class="row"><label class="btn">Choose image<input type="file" id="sticker" accept="image/*" hidden></label>
+          <label>scale</label><select id="sscale"><option>1</option><option>2</option><option>3</option><option>0.5</option></select>
+          ${pr.stickers.includes(g.name)?'<button id="unsticker" class="danger">Remove sticker</button>':''}</div>
+      </div>`;
+    }
+    h += `</div>`;
+  }
+  if (I.notes.length) h += `<h2>Notes</h2>` + I.notes.map(n=>`<div class="note warn">• ${n}</div>`).join('');
+  el.innerHTML = h;
+  el.querySelectorAll('.grp').forEach(d=>d.onclick=()=>{S.group=d.dataset.g; S.obj=null; drawOverlays(); drawPanel();});
+  if (!S.group) return;
+  const fit = () => $('#fit').value;
+  el.querySelectorAll('.frames figure').forEach(fig=>fig.onclick=()=>{
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+    inp.onchange=async()=>act('frame',{name:fig.dataset.f,image:await fileToDataURL(inp.files[0]),fit:fit()},'image replaced: '+fig.dataset.f);
+    inp.click();});
+  $('#multi').onchange=async e=>{const fs=[...e.target.files].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+    act('frames',{group:S.group,images:await Promise.all(fs.map(fileToDataURL)),fit:fit()},`${fs.length} images uploaded to ${S.group}`);};
+  $('#recolor').onclick=()=>act('recolor',{group:S.group,color:$('#color').value},'recolored: '+S.group);
+  $('#hide').onclick=()=>act('hide',{group:S.group,hidden:!S.info.project.hidden.includes(S.group)},'visibility changed: '+S.group);
+  $('#revert').onclick=()=>act('revert',{group:S.group},'undone: '+S.group);
+  if (!S.info.project.beta) return;
+  $('#resize').onclick=()=>act('resize',{group:S.group,w:+$('#w').value,h:+$('#h').value,fit:fit()},`size of ${S.group}: ${$('#w').value}×${$('#h').value}`);
+  el.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{const id=b.dataset.mv;
+    act('move',{obj:+id,x:+el.querySelector(`[data-x="${id}"]`).value,y:+el.querySelector(`[data-y="${id}"]`).value},`#${id} moved`);});
+  $('#sticker').onchange=async e=>act('sticker',{group:S.group,image:await fileToDataURL(e.target.files[0]),scale:+$('#sscale').value},'sticker applied to '+S.group);
+  const us=$('#unsticker'); if (us) us.onclick=()=>act('unsticker',{group:S.group},'sticker removed');
+}
+
+document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.onclick=()=>{setTab(b.dataset.tab); refresh();});
+$('#reroll').onclick=()=>{S.seed=Math.floor(Math.random()*1e6); setTab('example'); refresh();};
+$('#beta').onchange=async e=>{
+  if (e.target.checked && !(await ask('Beta mode patches numbers inside the face code (position/size) and borrows space from images the base does not use.\n\nIt may fail or freeze the band (restarting the band and switching faces fixes it). Continue?'))) { e.target.checked=false; return; }
+  syncBeta(); await act('beta',{enabled:e.target.checked}, e.target.checked?'beta mode enabled':'beta mode disabled (beta changes discarded)');};
+$('#btnExample').onclick=()=>S.base&&act('example',{seed:S.seed},'example artwork applied to your theme');
+$('#btnReset').onclick=async()=>{ if (S.base && await ask('Discard all changes for this base?')) act('reset',{},'theme restored'); };
+$('#btnHelp').onclick=()=>help.showModal();
+$('#btnBuild').onclick=async()=>{
+  if (!S.base) return;
+  try{
+    const rep = await api(`/api/project/${S.base}/report`);
+    rep.report.forEach(r=>log('  '+r)); log(`built: ${rep.file} (${rep.size} bytes)`,'o');
+    const a=document.createElement('a'); a.href=`/api/project/${S.base}/build`; a.download=`${S.base}_custom.bin`; a.click();
+  }catch(e){ log('Build error: '+e.message,'e'); }
+};
+document.addEventListener('keydown',e=>{
+  if (!S.info||!S.info.project.beta||S.obj===null||S.tab!=='project'||['INPUT','SELECT'].includes(document.activeElement.tagName)) return;
+  const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key]; if(!d) return;
+  const o=S.info.objects[S.obj]; if(!o.movable) return; e.preventDefault();
+  const [x,y]=S.info.positions[o.id]; const k=e.shiftKey?5:1;
+  act('move',{obj:o.id,x:Math.max(0,x+d[0]*k),y:Math.max(0,y+d[1]*k)});
+});
+loadBases();
+</script>
+</body>
+</html>

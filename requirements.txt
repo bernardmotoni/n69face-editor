@@ -1,0 +1,3 @@
+Pillow>=10.1
+# opcional, para capturar/instalar mostradores:
+# mitmproxy>=10
